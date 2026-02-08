@@ -50,19 +50,20 @@
     }
 
     #yesBtn {
-      background: #ff4d6d;
-      color: white;
-      left: 40%;
-      top: 50%;
-      transform: translate(-50%, -50%);
+    background: #ff4d6d;
+    color: white;
+    left: 40%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    transition: transform 0.25s ease; /* smooth growth */
     }
 
     #noBtn {
     background: #ccc;
     left: 60%;
     top: 50%;
-    transform: translate(-50%, -50%) rotate(-5deg);
-    transition: left 0.35s ease, top 0.35s ease; /* 👈 smooth movement */
+    transform: translate(-50%, -50%);
+    transition: left 0.35s ease, top 0.35s ease, opacity 0.4s ease; /* fade later */
     }
 
 
@@ -103,21 +104,21 @@
       }
     }
 
-    .runner {
-      position: absolute;
-      font-size: 28px;
-      top: -30px;
-      left: -30px;
-    }
+    @keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(1.3); }
+    50% { transform: translate(-50%, -50%) scale(1.4); }
+    100% { transform: translate(-50%, -50%) scale(1.3); }
+     }
+
   </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Will you be my Valentine? 💘</h1>
-    <div id="message"></div>
-    <div class="buttons">
-      <button id="yesBtn">Yes 💖</button>
-      <button id="noBtn">No 😶</button>
+    </head>
+    <body>
+    <div class="container">
+        <h1>Will you be my Valentine? 💘</h1>
+        <div id="message"></div>
+        <div class="buttons">
+        <button id="yesBtn">Yes 💖</button>
+        <button id="noBtn">No 😶</button>
     </div>
   </div>
 
@@ -145,38 +146,35 @@
     const x = Math.random() * maxX;
     const y = Math.random() * maxY;
 
+    // Smooth runaway movement
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
 
-
+    // Escalating messages
     if (attempts < messages.length) {
         message.textContent = messages[attempts];
     }
 
     attempts++;
 
+    // Grow the Yes button a little each time
+    const scale = 1 + attempts * 0.3; // tweak growth speed here
+    yesBtn.style.transform = `translate(-50%, -50%) scale(${scale})`;
+
+    // After 5 attempts: No button fades away
     if (attempts >= 5) {
-        message.textContent = "Resistance is futile. 💘";
-        noBtn.textContent = "Okay fine, Yes 😳";
-        noBtn.removeEventListener("mouseenter", moveNoButton);
-
-        const rect = noBtn.getBoundingClientRect();
-        noBtn.style.left = rect.left + "px";
-        noBtn.style.top = rect.top + "px";
-
-        noBtn.style.background = "#ff4d6d";
-        noBtn.style.color = "white";
-        noBtn.style.transform = "translate(-50%, -50%)";
-
-        noBtn.onclick = () => yesBtn.click();
-}
+        noBtn.style.opacity = "0";
+        noBtn.style.pointerEvents = "none"; // no more interaction
+        message.textContent = "The universe has made its choice 💘";
     }
+    }
+
 
 
     noBtn.addEventListener("mouseenter", moveNoButton);
 
     yesBtn.addEventListener("click", () => {
-      message.textContent = "YAY! 💘 Best decision ever.";
+      message.textContent = "You just made me the happiest nerd alive 🥹💘";
       spawnHearts();
       spawnConfetti();
     });
