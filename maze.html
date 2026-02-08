@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Find Your Way to My Heart 💖</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #fad0c4, #ffd1ff);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    .maze {
+      display: grid;
+      grid-template-columns: repeat(13, 50px);
+      grid-template-rows: repeat(13, 50px);
+      gap: 6px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .cell {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-size: 24px;
+      user-select: none;
+    }
+
+    .wall {
+      background: #ffb3c6;
+    }
+
+    .path {
+      background: #fff0f6;
+    }
+
+    .player {
+      background: #ff4d6d;
+      color: white;
+    }
+
+    .goal {
+      background: #ffd166;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 18px;
+      min-height: 24px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Find your way to my heart 💘</h1>
+  <p>Use arrow keys ⬅️ ⬆️ ⬇️ ➡️</p>
+
+  <div class="maze" id="maze"></div>
+  <div id="message"></div>
+
+  <script>
+    const mazeLayout = [
+    ["wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall"],
+    ["wall","player","path","path","wall","path","path","path","wall","path","path","path","wall"],
+    ["wall","path","wall","path","wall","path","wall","path","wall","path","wall","path","wall"],
+    ["wall","path","wall","path","path","path","wall","path","path","path","wall","path","wall"],
+    ["wall","path","wall","wall","wall","path","wall","wall","wall","path","wall","path","wall"],
+    ["wall","path","path","path","wall","path","path","path","wall","path","path","path","wall"],
+    ["wall","wall","wall","path","wall","wall","wall","path","wall","wall","wall","path","wall"],
+    ["wall","path","path","path","path","path","wall","path","path","path","wall","path","wall"],
+    ["wall","path","wall","wall","wall","path","wall","wall","wall","path","wall","path","wall"],
+    ["wall","path","path","path","wall","path","path","path","wall","path","path","path","wall"],
+    ["wall","wall","wall","path","wall","wall","wall","path","wall","wall","wall","path","wall"],
+    ["wall","path","path","path","path","path","wall","path","path","path","path","goal","wall"],
+    ["wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall"]
+    ];
+
+
+    const mazeEl = document.getElementById("maze");
+    const message = document.getElementById("message");
+
+    let playerPos = { x: 1, y: 1 };
+
+    function renderMaze() {
+      mazeEl.innerHTML = "";
+      mazeLayout.forEach((row, y) => {
+        row.forEach((cell, x) => {
+          const div = document.createElement("div");
+          div.classList.add("cell", cell);
+
+          if (cell === "player") div.textContent = "💖";
+          if (cell === "goal") div.textContent = "⭐";
+
+          mazeEl.appendChild(div);
+        });
+      });
+    }
+
+    function movePlayer(dx, dy) {
+      const newX = playerPos.x + dx;
+      const newY = playerPos.y + dy;
+
+      const target = mazeLayout[newY][newX];
+      if (target === "wall") return;
+
+      mazeLayout[playerPos.y][playerPos.x] = "path";
+      playerPos = { x: newX, y: newY };
+
+      if (target === "goal") {
+        mazeLayout[newY][newX] = "player";
+        renderMaze();
+        message.textContent = "You found your way to my heart 💖";
+        // setTimeout(() => {
+        //   window.location.href = "date.html"; // Page 3
+        // }, 1500);
+        return;
+      }
+
+      mazeLayout[newY][newX] = "player";
+      renderMaze();
+    }
+
+    document.addEventListener("keydown", (e) => {
+      switch (e.key) {
+        case "ArrowUp": movePlayer(0, -1); break;
+        case "ArrowDown": movePlayer(0, 1); break;
+        case "ArrowLeft": movePlayer(-1, 0); break;
+        case "ArrowRight": movePlayer(1, 0); break;
+      }
+    });
+
+    renderMaze();
+  </script>
+</body>
+</html>
