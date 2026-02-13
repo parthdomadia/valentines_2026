@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>A Little Treasure Hunt 💖</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .room {
+      position: relative;
+      width: 800px;
+      height: 450px;
+      background: #fff8f0;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+
+    .wall {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(#ffe4e1, #fff8f0);
+    }
+
+    .floor {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 120px;
+      background: #e0c3a3;
+    }
+
+    .item {
+      position: absolute;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      user-select: none;
+    }
+
+    .item:hover {
+      transform: scale(1.05);
+    }
+
+    .bed {
+      width: 260px;
+      height: 120px;
+      background: #ffb3c6;
+      border-radius: 16px;
+      bottom: 40px;
+      left: 40px;
+    }
+
+    .lamp {
+      width: 40px;
+      height: 100px;
+      background: #ffd166;
+      border-radius: 8px;
+      bottom: 120px;
+      left: 340px;
+    }
+
+    .desk {
+      width: 180px;
+      height: 90px;
+      background: #bde0fe;
+      border-radius: 12px;
+      bottom: 40px;
+      right: 60px;
+    }
+
+    .window {
+      width: 120px;
+      height: 100px;
+      background: #cdb4db;
+      border-radius: 12px;
+      top: 40px;
+      right: 80px;
+    }
+
+    .bookshelf {
+      width: 80px;
+      height: 160px;
+      background: #ffc8dd;
+      border-radius: 12px;
+      top: 60px;
+      left: 40px;
+    }
+
+    .popup {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .popup-content {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 16px;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      animation: popIn 0.2s ease;
+    }
+
+    .popup-content h2 {
+      margin-top: 0;
+    }
+
+    .popup-content button {
+      margin-top: 20px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 999px;
+      background: #ff4d6d;
+      color: white;
+      cursor: pointer;
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="room">
+    <div class="wall"></div>
+    <div class="floor"></div>
+
+    <div class="item bed" data-message="This bed is reserved for cozy movie nights with you 💕"></div>
+    <div class="item lamp" data-message="You light up my world more than this lamp ever could ✨"></div>
+    <div class="item desk" data-message="So many late-night talks and laughs ahead of us 😌"></div>
+    <div class="item window" data-message="Looking forward to all the sunsets we’ll watch together 🌅"></div>
+    <div class="item bookshelf" data-message="Every chapter with you is my favorite one 📖💖"></div>
+  </div>
+
+  <div class="popup" id="popup">
+    <div class="popup-content">
+      <h2 id="popupTitle">Found something!</h2>
+      <p id="popupMessage"></p>
+      <button id="closePopup">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const popup = document.getElementById("popup");
+    const popupMessage = document.getElementById("popupMessage");
+    const closePopup = document.getElementById("closePopup");
+
+    document.querySelectorAll(".item").forEach(item => {
+      item.addEventListener("click", () => {
+        popupMessage.textContent = item.dataset.message;
+        popup.style.display = "flex";
+      });
+    });
+
+    closePopup.addEventListener("click", () => {
+      popup.style.display = "none";
+    });
+
+    popup.addEventListener("click", (e) => {
+      if (e.target === popup) popup.style.display = "none";
+    });
+  </script>
+</body>
+</html>

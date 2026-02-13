@@ -67,9 +67,39 @@
     .hidden {
       display: none;
     }
+
+    .final-link {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 16px;
+    background: #111;
+    color: white;
+    text-decoration: none;
+    border-radius: 999px;
+    font-size: 14px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: translateY(-10px);
+    z-index: 999;
+  }
+
+  .final-link.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .hidden {
+    display: none;
+  }
+
   </style>
 </head>
 <body>
+  <a href="date.html" id="finalLink" class="final-link hidden">One Last Surprise ➜</a>
   <h1>Find your way to my heart 💘</h1>
   <p>Use arrow keys ⬅️ ⬆️ ⬇️ ➡️</p>
 
@@ -136,6 +166,22 @@
 
       mazeLayout[newY][newX] = "player";
       renderMaze();
+
+      const finalLink = document.getElementById("finalLink");
+
+      // ... inside movePlayer, when target === "goal"
+      if (target === "goal") {
+        mazeLayout[newY][newX] = "player";
+        renderMaze();
+        message.textContent = "You found your way to my heart 💖";
+
+        // Reveal the final page button
+        finalLink.classList.remove("hidden");
+        finalLink.classList.add("show");
+
+        return;
+      }
+
     }
 
     document.addEventListener("keydown", (e) => {
