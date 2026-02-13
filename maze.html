@@ -64,42 +64,35 @@
       min-height: 24px;
     }
 
-    .hidden {
-      display: none;
+    .final-link {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 16px;
+      background: #111;
+      color: white;
+      text-decoration: none;
+      border-radius: 999px;
+      font-size: 14px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      transform: translateY(-10px);
+      z-index: 999;
     }
 
-    .final-link {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 10px 16px;
-    background: #111;
-    color: white;
-    text-decoration: none;
-    border-radius: 999px;
-    font-size: 14px;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.2);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    transform: translateY(-10px);
-    z-index: 999;
-  }
-
-  .final-link.show {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-  }
-
-  .hidden {
-    display: none;
-  }
-
+    .final-link.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
   </style>
 </head>
 <body>
-  <a href="date.html" id="finalLink" class="final-link hidden">One Last Surprise ➜</a>
+  <!-- Hidden button to final page -->
+  <a href="treasure_hunt.html" id="finalLink" class="final-link">One Last Surprise ➜</a>
+
   <h1>Find your way to my heart 💘</h1>
   <p>Use arrow keys ⬅️ ⬆️ ⬇️ ➡️</p>
 
@@ -107,27 +100,29 @@
   <div id="message"></div>
 
   <script>
-    const mazeLayout = [
-    ["wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall"],
-    ["wall","player","path","path","wall","path","path","path","wall","path","path","path","wall"],
-    ["wall","path","wall","path","wall","path","wall","path","wall","path","wall","path","wall"],
-    ["wall","path","wall","path","path","path","wall","path","path","path","wall","path","wall"],
-    ["wall","path","wall","wall","wall","path","wall","wall","wall","path","wall","path","wall"],
-    ["wall","path","path","path","wall","path","path","path","wall","path","path","path","wall"],
-    ["wall","wall","wall","path","wall","wall","wall","path","wall","wall","wall","path","wall"],
-    ["wall","path","path","path","path","path","wall","path","path","path","wall","path","wall"],
-    ["wall","path","wall","wall","wall","path","wall","wall","wall","path","wall","path","wall"],
-    ["wall","path","path","path","wall","path","path","path","wall","path","path","path","wall"],
-    ["wall","wall","wall","path","wall","wall","wall","path","wall","wall","wall","path","wall"],
-    ["wall","path","path","path","path","path","wall","path","path","path","path","goal","wall"],
-    ["wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall"]
-    ];
+    const finalLink = document.getElementById("finalLink");
 
+    const mazeLayout = [
+      ["wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall"],
+      ["wall","player","path","path","wall","path","path","path","wall","path","path","path","wall"],
+      ["wall","path","wall","path","wall","path","wall","path","wall","path","wall","path","wall"],
+      ["wall","path","wall","path","path","path","wall","path","path","path","wall","path","wall"],
+      ["wall","path","wall","wall","wall","path","wall","wall","wall","path","wall","path","wall"],
+      ["wall","path","path","path","wall","path","path","path","wall","path","path","path","wall"],
+      ["wall","wall","wall","path","wall","wall","wall","path","wall","wall","wall","path","wall"],
+      ["wall","path","path","path","path","path","wall","path","path","path","wall","path","wall"],
+      ["wall","path","wall","wall","wall","path","wall","wall","wall","path","wall","path","wall"],
+      ["wall","path","path","path","wall","path","path","path","wall","path","path","path","wall"],
+      ["wall","wall","wall","path","wall","wall","wall","path","wall","wall","wall","path","wall"],
+      ["wall","path","path","path","path","path","wall","path","path","path","path","goal","wall"],
+      ["wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall","wall"]
+    ];
 
     const mazeEl = document.getElementById("maze");
     const message = document.getElementById("message");
 
     let playerPos = { x: 1, y: 1 };
+    let gameWon = false;
 
     function renderMaze() {
       mazeEl.innerHTML = "";
@@ -145,6 +140,8 @@
     }
 
     function movePlayer(dx, dy) {
+      if (gameWon) return;
+
       const newX = playerPos.x + dx;
       const newY = playerPos.y + dy;
 
@@ -158,30 +155,16 @@
         mazeLayout[newY][newX] = "player";
         renderMaze();
         message.textContent = "You found your way to my heart 💖";
-        // setTimeout(() => {
-        //   window.location.href = "date.html"; // Page 3
-        // }, 1500);
+
+        // Reveal the final page button
+        finalLink.classList.add("show");
+
+        gameWon = true;
         return;
       }
 
       mazeLayout[newY][newX] = "player";
       renderMaze();
-
-      const finalLink = document.getElementById("finalLink");
-
-      // ... inside movePlayer, when target === "goal"
-      if (target === "goal") {
-        mazeLayout[newY][newX] = "player";
-        renderMaze();
-        message.textContent = "You found your way to my heart 💖";
-
-        // Reveal the final page button
-        finalLink.classList.remove("hidden");
-        finalLink.classList.add("show");
-
-        return;
-      }
-
     }
 
     document.addEventListener("keydown", (e) => {

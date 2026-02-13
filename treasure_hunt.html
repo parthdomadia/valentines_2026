@@ -2,103 +2,117 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>A Little Treasure Hunt 💖</title>
+  <title>Your Final Surprise 💝</title>
   <style>
     body {
       margin: 0;
       height: 100vh;
-      background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
-      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top, #222, #000);
       display: flex;
       align-items: center;
       justify-content: center;
+      font-family: 'Segoe UI', sans-serif;
       overflow: hidden;
     }
 
-    .room {
+    .scene {
       position: relative;
-      width: 800px;
-      height: 450px;
-      background: #fff8f0;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      scale: 1.3;
+      width: min(95vw, 900px);
+      aspect-ratio: 16 / 9;
+      background: url("room-bg.png") center/contain no-repeat;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
       overflow: hidden;
     }
 
-    .wall {
+    /* Dimming overlay */
+    .scene::after {
+      content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(#ffe4e1, #fff8f0);
+      background: rgba(0, 0, 0, 0);
+      transition: background 0.6s ease;
+      pointer-events: none;
+      z-index: 2;
     }
 
-    .floor {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 120px;
-      background: #e0c3a3;
+    .item.dimmed {
+        opacity: 0.35;
+        filter: grayscale(0.6) blur(0.5px);
+        pointer-events: none; /* optional: prevent clicking them anymore */
+    }
+
+    .scene.dim::after {
+      background: rgba(0, 0, 0, 0.45);
     }
 
     .item {
       position: absolute;
       cursor: pointer;
-      transition: transform 0.15s ease;
-      user-select: none;
+      transition: transform 0.15s ease, filter 0.15s ease, opacity 0.3s ease;
+      z-index: 3; /* above dim overlay */
     }
 
     .item:hover {
       transform: scale(1.05);
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.3));
     }
 
-    .bed {
-      width: 260px;
-      height: 120px;
-      background: #ffb3c6;
-      border-radius: 16px;
-      bottom: 40px;
-      left: 40px;
+    /* Position items relative to the scene */
+    .disco {
+      width: 6%;
+      top: 46%;
+      left: 45%;
     }
 
-    .lamp {
-      width: 40px;
-      height: 100px;
-      background: #ffd166;
-      border-radius: 8px;
-      bottom: 120px;
-      left: 340px;
+    .scroll { 
+      width: 10%;
+      bottom: 21%;
+      left: 58%;
     }
 
-    .desk {
-      width: 180px;
-      height: 90px;
-      background: #bde0fe;
-      border-radius: 12px;
-      bottom: 40px;
-      right: 60px;
+    .gift {
+      width: 12%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      z-index: 4; /* above everything */
     }
 
-    .window {
-      width: 120px;
-      height: 100px;
-      background: #cdb4db;
-      border-radius: 12px;
-      top: 40px;
-      right: 80px;
+    .gift.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+      animation: glowPulse 1.8s ease-in-out infinite;
     }
 
-    .bookshelf {
-      width: 80px;
-      height: 160px;
-      background: #ffc8dd;
-      border-radius: 12px;
-      top: 60px;
-      left: 40px;
+    @keyframes glowPulse {
+      0% {
+        filter:
+          drop-shadow(0 0 10px rgba(255, 120, 160, 0.6))
+          drop-shadow(0 0 20px rgba(255, 160, 200, 0.5));
+      }
+      50% {
+        filter:
+          drop-shadow(0 0 16px rgba(255, 120, 160, 0.9))
+          drop-shadow(0 0 36px rgba(255, 160, 200, 0.8));
+      }
+      100% {
+        filter:
+          drop-shadow(0 0 10px rgba(255, 120, 160, 0.6))
+          drop-shadow(0 0 20px rgba(255, 160, 200, 0.5));
+      }
     }
 
+    /* Popup */
     .popup {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.6);
       display: none;
       align-items: center;
       justify-content: center;
@@ -109,9 +123,9 @@
       background: white;
       padding: 30px 40px;
       border-radius: 16px;
-      max-width: 400px;
+      max-width: 420px;
       text-align: center;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
       animation: popIn 0.2s ease;
     }
 
@@ -130,48 +144,85 @@
     }
 
     @keyframes popIn {
-      from {
-        transform: scale(0.9);
-        opacity: 0;
-      }
-      to {
-        transform: scale(1);
-        opacity: 1;
-      }
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
   </style>
 </head>
 <body>
-  <div class="room">
-    <div class="wall"></div>
-    <div class="floor"></div>
-
-    <div class="item bed" data-message="This bed is reserved for cozy movie nights with you 💕"></div>
-    <div class="item lamp" data-message="You light up my world more than this lamp ever could ✨"></div>
-    <div class="item desk" data-message="So many late-night talks and laughs ahead of us 😌"></div>
-    <div class="item window" data-message="Looking forward to all the sunsets we’ll watch together 🌅"></div>
-    <div class="item bookshelf" data-message="Every chapter with you is my favorite one 📖💖"></div>
+  <div class="scene" id="scene">
+    <img src="discoball.png" class="item disco" id="disco" alt="Disco Ball" />
+    <img src="blue.png" class="item scroll" id="scroll" alt="Rolled Paper" />
+    <img src="gift_box.png" class="item gift" id="gift" alt="Final Gift" />
   </div>
 
   <div class="popup" id="popup">
     <div class="popup-content">
-      <h2 id="popupTitle">Found something!</h2>
+      <h2>Found something!</h2>
       <p id="popupMessage"></p>
       <button id="closePopup">Close</button>
     </div>
   </div>
-
+  
+    <audio id="chime" src="chime.mp3" preload="auto"></audio>
   <script>
+    const scene = document.getElementById("scene");
+    const disco = document.getElementById("disco");
+    const scroll = document.getElementById("scroll");
+    const gift = document.getElementById("gift");
+
     const popup = document.getElementById("popup");
     const popupMessage = document.getElementById("popupMessage");
     const closePopup = document.getElementById("closePopup");
+    const chime = document.getElementById("chime");
 
-    document.querySelectorAll(".item").forEach(item => {
-      item.addEventListener("click", () => {
-        popupMessage.textContent = item.dataset.message;
-        popup.style.display = "flex";
-      });
+    let discoFound = false;
+    let scrollFound = false;
+    
+    let giftOpened = false;
+    
+    function showPopup(message) {
+    popupMessage.innerHTML = message.replace(/\n/g, "<br>");
+    popup.style.display = "flex";
+    }
+
+    function tryRevealGift() {
+        if (discoFound && scrollFound) {
+            gift.classList.add("show");
+            scene.classList.add("dim");
+
+            // Dim other items
+            disco.classList.add("dimmed");
+            scroll.classList.add("dimmed");
+
+        }
+    }
+
+    disco.addEventListener("click", () => {
+      discoFound = true;
+      showPopup("A disco ball for all the ways you make us shine! ✨");
+      tryRevealGift();
     });
+
+    scroll.addEventListener("click", () => {
+      scrollFound = true;
+      showPopup("A memento to all the memories we have shared together, cheers to infinte more! 📜💙");
+      tryRevealGift();
+    });
+
+    gift.addEventListener("click", () => {
+        // Optional tiny bounce for opening feel
+        gift.style.transform = "translate(-50%, -50%) scale(1.05)";
+        setTimeout(() => {
+            gift.style.transform = "translate(-50%, -50%) scale(1)";
+        }, 150);
+
+        // Show final letter after a short delay
+        setTimeout(() => {
+            showPopup("I saved the best for last… 💝\n\nWill you be my Valentine? 💖");
+        }, 300);
+        });
+
 
     closePopup.addEventListener("click", () => {
       popup.style.display = "none";
